@@ -8,11 +8,11 @@ data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot],
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
 data Outcome = Turn | Winner Player | Tie 
 
-board = Board {goalP1 = 0, slotsP1 = [4,4,4,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P2}
+board = Board {goalP1 = 0, slotsP1 = [4,4,4,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
 --Show Function
 ------------------------------------
--- ha ha funny show function
+-- ha ha funny show function: use putStr (showBoard board) when trying to print in ghci
 showBoard :: Board -> String
 showBoard Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} =if p == P1 then  "    (6) (5) (4) (3) (2) (1) \n" ++ body else body ++ "    (1) (2) (3) (4) (5) (6)\n"
   where border = "@><><><><><><><@><><><><><><><@\n"
