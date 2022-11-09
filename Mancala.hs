@@ -69,7 +69,8 @@ getWinner Board {goalP1 = g1, goalP2 = g2}
   | otherwise = Tie
 
 -- takes a board and returns: Turn, Winner, or Tie
-
+updateTurn :: Board -> Board
+updateTurn Board {sideP1 = s1, goalP1 = g1, sideP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board s1 g1 s2 g2 P2 else Board s1 g1 s2 g2 P1
 
 
 
