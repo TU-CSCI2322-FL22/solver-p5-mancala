@@ -107,6 +107,12 @@ checkCapture brd pos =
       currentSide = getSide fauxBrd
   in if (currentSide !! (pos - 1)) == 1 then capture brd pos else brd
 
+
+-- step 1: take all beans out of slot
+-- step 2: increment over list leaving one bean at a time
+-- step 3: if you get to a goal, check whose it is and then leave a bean or continue
+-- step 4: increment over list leaving one bean at a time
+-- step 5: return updated board
 -- takes a board and a position and return an updated board
 capture :: Board -> Int -> Board
 capture brd pos =
@@ -141,10 +147,19 @@ makePosZero slots pos = frontHalf ++ [0] ++ backHalf
 
 
 updateOutcome :: Board -> Outcome
-updateOutcome = undefined
+updateOutcome Board {sideP1 = s1, sideP2 = s2, playerTurn = p} = if not (sum s1 && sum s2 == 0) then Turn else getWinner board 
+
+
+-- helper function
+getWinner :: Board -> Outcome
+getWinner Board {goalP1 = g1, goalP2 = g2} 
+  | g1 > g2 = Winner P1
+  | g2 > g1 = Winner P2
+  | otherwise = Tie
 
 -- takes a board and returns: Turn, Winner, or Tie
-
+updateTurn :: Board -> Board
+updateTurn Board {sideP1 = s1, goalP1 = g1, sideP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board s1 g1 s2 g2 P2 else Board s1 g1 s2 g2 P1
 
 
 
