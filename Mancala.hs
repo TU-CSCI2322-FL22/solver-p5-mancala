@@ -19,11 +19,12 @@ showBoard Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTur
   where border = "@><><><><><><><@><><><><><><><@\n"
         body = border ++ "|  "++displaySideOne s1++"|  |\n"++ "|"++show g1++    " |-----------------------| "++show g2++"|\n" ++ "|  "++displaySideTwo s2 ++"|  |\n"++ border
 
-
+-- displayes slotsP1 backwards with border 
 displaySideOne :: [Slot] -> String
 displaySideOne [] = ""
 displaySideOne (b:bs) = displaySideOne bs ++ "| "++show b++" "
 
+-- displays slotsP2 with border
 displaySideTwo :: [Slot] -> String
 displaySideTwo [] = ""
 displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
@@ -35,7 +36,6 @@ displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
 across :: Int -> Int
 across x = if x == 7 then 14 else 14 - x
 
---Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p}
 -- pattern match and return the opposite slot for every position
 move :: Board -> Int -> Board
 move brd pos =
@@ -45,28 +45,28 @@ move brd pos =
   in if x == 2 then executePlay (g1,s,g2,s2,p) beans 1 else executePlay (g1,s1,g2,s,p) beans 3
 
 
-
+-- changes a board into a FauxBoard for pattern matching
 breakdown :: Board -> FauxBoard
 breakdown Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} = (g1,s1,g2,s2,p)
 
 
-
+-- gets the player's [Slot]
 getSide :: FauxBoard -> ([Slot],Int)
 getSide (g1,s1,g2,s2,p) = if p == P1 then (s1,2) else (s2,4)
 
 
-
+-- gets the other player's [Slot] 
 getOtherSide :: FauxBoard -> [Slot]
 getOtherSide (g1,s1,g2,s2,p) = if p == P1 then s2 else s1
 
 --Moves the Peices on one side of the board, does not delete the starting peice
---First int is position, scond int is beans
+--needs to be renamed 
 sideMovement :: [Slot] -> Int -> Bean -> [Slot]
 sideMovement _ _ 0 = error "Shouldnt Have a zero bean input"
 sideMovement slots pos beans = splitAndRebuild slots beans
 
 
-
+--adds 1 to every index until it runs out of beans or reaches the end of the list
 splitAndRebuild :: [Slot] -> Bean -> [Slot]
 splitAndRebuild slots 0 = slots
 splitAndRebuild [] x = []
@@ -74,7 +74,8 @@ splitAndRebuild (b:bs) beans = (b+1):(splitAndRebuild bs (beans-1))
 
 
 
---Doesnt work for bigger boards than standard
+--Does operations for the first part of a turn
+--needs to be renamed
 insideMovement :: [Slot] -> Int -> ([Slot],Bean)
 insideMovement slots pos = (newFront front ++ sideMovement back (pos-1) beans, beans-(6-pos))
   where splice = splitAt pos slots
@@ -83,37 +84,28 @@ insideMovement slots pos = (newFront front ++ sideMovement back (pos-1) beans, b
         beans = last front
 
 
-
+-- updates the front of a [Slot] to show that a slot has been emptied
 newFront :: [Slot] -> [Slot]
 newFront [b] = [0]
 newFront (b:bs) = b:(newFront bs)
 
 
-
+-- continues distributing beans until it runs out
 executePlay :: FauxBoard -> Bean -> Int -> Board
 executePlay (g1,s1,g2,s2,p) beans 1 = if beans > 0 then if p == P1 then executePlay (g1+1,s1,g2,s2,p) (beans-1) 4 else executePlay (g1,s1,g2,s2,p) (beans) 4 else Board g1 s1 g2 s2 p
 executePlay (g1,s1,g2,s2,p) beans 2 = if beans > 0 then executePlay (g1,sideMovement s1 1 beans,g2,s2,p) (beans-6) 1 else Board g1 s1 g2 s2 p
 executePlay (g1,s1,g2,s2,p) beans 3 = if beans > 0 then if p == P2 then executePlay (g1,s1,g2+1,s2,p) (beans-1) 2 else executePlay (g1,s1,g2,s2,p) (beans) 2 else Board g1 s1 g2 s2 p
 executePlay (g1,s1,g2,s2,p) beans 4 = if beans > 0 then executePlay (g1,s1,g2,sideMovement s2 1 beans,p) (beans-6) 3 else Board g1 s1 g2 s2 p
 
-
---Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} pos = if 7 - pos == num then --goes in goal
---       else if 7 - pos < num then  --stays on p1 side
---       else --goes to p2 side
-
+-- check if a capture is possible and if so then caputre else return the board
 checkCapture :: Board -> Int -> Board
 checkCapture brd pos =
   let fauxBrd = breakdown brd
       currentSide = getSide fauxBrd
-  in if (currentSide !! (pos - 1)) == 1 then capture brd pos else brd
+  in if (fst currentSide !! (pos - 1)) == 1 then capture brd pos else brd
 
-
--- step 1: take all beans out of slot
--- step 2: increment over list leaving one bean at a time
--- step 3: if you get to a goal, check whose it is and then leave a bean or continue
--- step 4: increment over list leaving one bean at a time
--- step 5: return updated board
--- takes a board and a position and return an updated board
+-- does the operations for checkCapture
+-- needs to take a FauxBoard
 capture :: Board -> Int -> Board
 capture brd pos =
   let fauxBrd = breakdown brd
@@ -124,15 +116,19 @@ capture brd pos =
       beanTotal = 1 + (otherSide !! (pos-1))
   in  Board (goal1 fauxBrd beanTotal) (makePosZero (getSide1 fauxBrd) pos) (goal2 fauxBrd beanTotal) (makePosZero (getSide2 fauxBrd) pos) (getPlayer (fauxBrd))
 
+-- returns player
 getPlayer :: FauxBoard -> Player
 getPlayer (_,_,_,_,p) = p
 
+--returns slotsP1
 getSide1 :: FauxBoard -> [Slot]
 getSide1 (_,s1,_,_,_) = s1
 
+--returns slotsP2
 getSide2 :: FauxBoard -> [Slot]
 getSide2 (_,_,_,s2,_) = s2
 
+-- changes the value of a slot at a position to 0
 makePosZero :: [Slot] -> Int -> [Slot]
 makePosZero slots pos = frontHalf ++ [0] ++ backHalf
   where frontHalf = tail (fst(splitAt (pos) slots))
@@ -145,9 +141,9 @@ makePosZero slots pos = frontHalf ++ [0] ++ backHalf
 -- GameState Functions
 ------------------------------------
 
-
+--takes a board and returns: Turn, Winner, or Tie
 updateOutcome :: Board -> Outcome
-updateOutcome Board {sideP1 = s1, sideP2 = s2, playerTurn = p} = if not (sum s1 && sum s2 == 0) then Turn else getWinner board 
+updateOutcome Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p} = if not (sum s1 == 0 && sum s2 == 0) then Turn else getWinner board 
 
 
 -- helper function
@@ -157,9 +153,9 @@ getWinner Board {goalP1 = g1, goalP2 = g2}
   | g2 > g1 = Winner P2
   | otherwise = Tie
 
--- takes a board and returns: Turn, Winner, or Tie
+-- takes a board and returns a board with the other player
 updateTurn :: Board -> Board
-updateTurn Board {sideP1 = s1, goalP1 = g1, sideP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board s1 g1 s2 g2 P2 else Board s1 g1 s2 g2 P1
+updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
 
 
 
