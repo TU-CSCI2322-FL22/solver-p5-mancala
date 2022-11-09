@@ -38,16 +38,16 @@ across x = if x == 7 then 14 else 14 - x
 --Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p}
 -- pattern match and return the opposite slot for every position
 move :: Board -> Int -> Board
-move brd pos = executePlay  (beans)
+move brd pos = executePlay beans x
   where brkdn = breakdown brd
-        slots = getSide brkdn
+        (slots,x) = getSide brkdn
         (s, beans) = insideMovement slots pos
 
 breakdown :: Board -> FauxBoard
 breakdown Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} = (g1,s1,g2,s2,p)
 
-getSide :: FauxBoard -> [Slot]
-getSide (g1,s1,g2,s2,p) = if p == P1 then s1 else s2
+getSide :: FauxBoard -> ([Slot],Int)
+getSide (g1,s1,g2,s2,p) = if p == P1 then (s1,2) else (s2,4)
 
 --Moves the Peices on one side of the board, does not delete the starting peice
 --First int is position, scond int is beans
@@ -64,8 +64,8 @@ splitAndRebuild (b:bs) beans = (b+1):(splitAndRebuild bs (beans-1))
 
 
 --Doesnt work for bigger boards than standard
-insideMovement :: [Slot] -> Int -> ([Slot], Bean)
-insideMovement slots pos = newFront front ++ sideMovement back (pos-1) beans
+insideMovement :: [Slot] -> Int -> ([Slot],Bean)
+insideMovement slots pos = (newFront front ++ sideMovement back (pos-1) beans, beans)
   where splice = splitAt pos slots
         front = fst splice
         back = snd splice
@@ -77,8 +77,11 @@ newFront (b:bs) = b:(newFront bs)
 
 
 
-executePlay :: Board -> Beans -> Board
-exectuePlay brd pl (slots, beans) = if beans > 1 then
+executePlay :: FauxBoard -> Bean -> Int -> Board
+exectuePlay (g1,s1,g2,s2,p) beans 1 = if beans > 0 then if p == P1 then executePlay (g1+1,s1,g2,s2,p) (beans-1) 4 else executePlay (g1,s1,g2,s2,p) (beans) 4 else Board g1 s1 g2 s2 p
+executePlay (g1,s1,g2,s2,p) beans 2 = if beans > 0 then executePlay (g1,sideMovement s1 1 beans,g2,s2,p) (beans-6) 1 else Board g1 s1 g2 s2 p
+executePlay (g1,s1,g2,s2,p) beans 3 = if beans > 0 then if p == P2 then executePlay (g1,s1,g2+1,s2,p) (beans-1) 2 else executePlay (g1,s1,g2,s2,p) (beans) 2 else Board g1 s1 g2 s2 p
+executePlay (g1,s1,g2,s2,p) beans 4 = if beans > 0 then executePlay (g1,s1,g2,sideMovement s2 1 beans,p) (beans-6) 3 else Board g1 s1 g2 s2 p
 --Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} pos = if 7 - pos == num then --goes in goal
 --       else if 7 - pos < num then  --stays on p1 side
 --       else --goes to p2 side
