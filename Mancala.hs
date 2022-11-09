@@ -2,7 +2,8 @@ import Debug.Trace
 import Data.Maybe
 
 type Bean = Int
-type Slot = Bean 
+type Slot = Bean
+type FauxBoard = (Slot, [Slot], Slot, [Slot], Player)
 data Player = P1 | P2 deriving (Show, Eq)
 data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
@@ -32,17 +33,62 @@ displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
 ----------------------------------
 
 across :: Int -> Int
-across = undefined
+across x = if x == 7 then 14 else 14 - x
 
+--Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p}
 -- pattern match and return the opposite slot for every position
-
 move :: Board -> Int -> Board
-move = undefined
+move brd pos = executePlay  (beans)
+  where brkdn = breakdown brd
+        slots = getSide brkdn
+        (s, beans) = insideMovement slots pos
+
+breakdown :: Board -> FauxBoard
+breakdown Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} = (g1,s1,g2,s2,p)
+
+getSide :: FauxBoard -> [Slot]
+getSide (g1,s1,g2,s2,p) = if p == P1 then s1 else s2
+
+--Moves the Peices on one side of the board, does not delete the starting peice
+--First int is position, scond int is beans
+sideMovement :: [Slot] -> Int -> Bean -> [Slot]
+sideMovement _ _ 0 = error "Shouldnt Have a zero bean input"
+sideMovement slots pos beans = if beans > length midSlots then error "Too many beans"
+                               else firstSlots ++ (splitAndRebuild midSlots beans)
+  where firstSlots = fst (splitAt (pos - 1) slots)
+        midSlots = snd (splitAt (pos - 1) slots)
+
+splitAndRebuild :: [Slot] -> Int -> [Slot]
+splitAndRebuild slots 0 = slots
+splitAndRebuild (b:bs) beans = (b+1):(splitAndRebuild bs (beans-1))
+
+
+--Doesnt work for bigger boards than standard
+insideMovement :: [Slot] -> Int -> ([Slot], Bean)
+insideMovement slots pos = newFront front ++ sideMovement back (pos-1) beans
+  where splice = splitAt pos slots
+        front = fst splice
+        back = snd splice
+        beans = last front
+
+newFront :: [Slot] -> [Slot]
+newFront [b] = [0]
+newFront (b:bs) = b:(newFront bs)
+
+
+
+executePlay :: Board -> Beans -> Board
+exectuePlay brd pl (slots, beans) = if beans > 1 then
+--Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} pos = if 7 - pos == num then --goes in goal
+--       else if 7 - pos < num then  --stays on p1 side
+--       else --goes to p2 side
+
+checkCapture :: Board -> Bool
+checkCapture = undefined
 
 -- takes a board and a position and return an updated board
-
-checkCapture :: Board -> Board
-checkCapture = undefined
+capture :: Board -> Board
+capture = undefined
 
 -- checks if it is possible to capture a piece and if so changs the board
 
