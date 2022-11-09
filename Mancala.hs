@@ -46,7 +46,6 @@ move brd pos =
 
 
 
-
 breakdown :: Board -> FauxBoard
 breakdown Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} = (g1,s1,g2,s2,p)
 
@@ -56,6 +55,9 @@ getSide :: FauxBoard -> ([Slot],Int)
 getSide (g1,s1,g2,s2,p) = if p == P1 then (s1,2) else (s2,4)
 
 
+
+getOtherSide :: FauxBoard -> [Slot]
+getOtherSide (g1,s1,g2,s2,p) = if p == P1 then s2 else s1
 
 --Moves the Peices on one side of the board, does not delete the starting peice
 --First int is position, scond int is beans
@@ -93,16 +95,43 @@ executePlay (g1,s1,g2,s2,p) beans 1 = if beans > 0 then if p == P1 then executeP
 executePlay (g1,s1,g2,s2,p) beans 2 = if beans > 0 then executePlay (g1,sideMovement s1 1 beans,g2,s2,p) (beans-6) 1 else Board g1 s1 g2 s2 p
 executePlay (g1,s1,g2,s2,p) beans 3 = if beans > 0 then if p == P2 then executePlay (g1,s1,g2+1,s2,p) (beans-1) 2 else executePlay (g1,s1,g2,s2,p) (beans) 2 else Board g1 s1 g2 s2 p
 executePlay (g1,s1,g2,s2,p) beans 4 = if beans > 0 then executePlay (g1,s1,g2,sideMovement s2 1 beans,p) (beans-6) 3 else Board g1 s1 g2 s2 p
+
+
 --Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} pos = if 7 - pos == num then --goes in goal
 --       else if 7 - pos < num then  --stays on p1 side
 --       else --goes to p2 side
 
-checkCapture :: Board -> Bool
-checkCapture = undefined
+checkCapture :: Board -> Int -> Board
+checkCapture brd pos =
+  let fauxBrd = breakdown brd
+      currentSide = getSide fauxBrd
+  in if (currentSide !! (pos - 1)) == 1 then capture brd pos else brd
 
 -- takes a board and a position and return an updated board
-capture :: Board -> Board
-capture = undefined
+capture :: Board -> Int -> Board
+capture brd pos =
+  let fauxBrd = breakdown brd
+      currentSide = getSide fauxBrd
+      otherSide = getOtherSide fauxBrd
+      goal1 (g1,_,_,_,p) beans = if p == P1 then g1 + beans else g1
+      goal2 (_,_,g2,_,p) beans = if p == P2 then g2 + beans else g2
+      beanTotal = 1 + (otherSide !! (pos-1))
+  in  Board (goal1 fauxBrd beanTotal) (makePosZero (getSide1 fauxBrd) pos) (goal2 fauxBrd beanTotal) (makePosZero (getSide2 fauxBrd) pos) (getPlayer (fauxBrd))
+
+getPlayer :: FauxBoard -> Player
+getPlayer (_,_,_,_,p) = p
+
+getSide1 :: FauxBoard -> [Slot]
+getSide1 (_,s1,_,_,_) = s1
+
+getSide2 :: FauxBoard -> [Slot]
+getSide2 (_,_,_,s2,_) = s2
+
+makePosZero :: [Slot] -> Int -> [Slot]
+makePosZero slots pos = frontHalf ++ [0] ++ backHalf
+  where frontHalf = tail (fst(splitAt (pos) slots))
+        backHalf = snd(splitAt (pos) slots)
+
 
 -- checks if it is possible to capture a piece and if so changs the board
 
