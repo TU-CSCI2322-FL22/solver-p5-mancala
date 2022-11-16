@@ -15,6 +15,7 @@ readGameHelp _ _ = error "incorrect string"
 
 showGame :: Board -> String
 showGame (Board g1 lst g2 lst2 P1) = concat [(show g1), " ", showGameHelp lst, (show g2), " ", showGameHelp lst, (show P1)]
+showGame (Board g1 lst g2 lst2 P2) = concat [(show g1), " ", showGameHelp lst, (show g2), " ", showGameHelp lst, (show P2)]
 
 
 showGameHelp [] = []
