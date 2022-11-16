@@ -157,3 +157,4 @@ updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTu
 validMoves :: Board -> [Int]
 validMoves (Board _ s1 _ _ P1) = [pos |pos <- [1..6], (s1 !! (pos -1)) /= 0 ]
 validMoved (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
+

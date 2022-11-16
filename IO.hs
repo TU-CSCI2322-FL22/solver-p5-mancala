@@ -1,4 +1,6 @@
+module IO where
 
+import "Mancala.hs"
 
 -- "0 1 2 3 4 5 6 0 1 2 3 4 5 6 P1"
 
@@ -10,3 +12,26 @@ readGameHelp [g1, a, b, c, d, e, f, g2, h, i, j, k, l, m] P1 = Board g1 [a, b, c
 readGameHelp [g1, a, b, c, d, e, f, g2, h, i, j, k, l, m] P2 = Board g1 [a, b, c, d, e, f] g2 [h, i, j, k, l, m] P2
 readGameHelp _ _ = error "incorrect string"
 
+
+showGame :: Board -> String
+showGame (Board g1 lst g2 lst2 P1) = concat [(show g1), " ", showGameHelp lst, (show g2), " ", showGameHelp lst, (show P1)]
+showGame (Board g1 lst g2 lst2 P2) = concat [(show g1), " ", showGameHelp lst, (show g2), " ", showGameHelp lst, (show P2)]
+
+
+showGameHelp [] = []
+showGameHelp (x:xs) = concat[(show x), " ", showGameHelp xs]
+
+
+writeGame :: Board -> FilePath -> IO ()
+writeGame brd path = writeFile path (showGame brd)
+
+
+loadGame :: FilePath -> IO Board
+loadGame path = 
+  do brd = readFile path
+     return (readGame brd)
+
+
+-- can complete when the algorithm is complete
+putWinner :: Board -> IO ()
+putWinner brd = return getWinner brd
