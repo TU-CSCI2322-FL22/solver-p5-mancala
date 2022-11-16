@@ -4,7 +4,7 @@ import Data.Maybe
 type Bean = Int
 type Slot = Bean
 type FauxBoard = (Slot, [Slot], Slot, [Slot], Player)
-data Player = P1 | P2 deriving (Show, Eq)
+data Player = P1 | P2 deriving (Show, Eq, Read)
 data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
 data Outcome = Turn | Winner Player | Tie 
@@ -156,18 +156,5 @@ getWinner Board {goalP1 = g1, goalP2 = g2}
 -- takes a board and returns a board with the other player
 updateTurn :: Board -> Board
 updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
