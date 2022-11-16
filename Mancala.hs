@@ -1,3 +1,4 @@
+module Mancala where
 import Debug.Trace
 import Data.Maybe
 
@@ -7,9 +8,9 @@ data Player = P1 | P2 deriving (Show, Eq)
 
 data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
-data Outcome = Turn | Winner Player | Tie 
+data Outcome = Turn | Winner Player | Tie deriving (Show, Eq)
 
-board = Board {goalP1 = 0, slotsP1 = [4,4,1,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
+board = Board {goalP1 = 0, slotsP1 = [4,4,0,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
 --Show Function
 ------------------------------------
@@ -133,8 +134,6 @@ makePosZero slots pos = frontHalf ++ [0] ++ backHalf
         backHalf = snd(splitAt (pos) slots)
 
 
--- checks if it is possible to capture a piece and if so changs the board
-
 
 -- GameState Functions
 ------------------------------------
@@ -146,13 +145,15 @@ updateOutcome Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p} = if not (sum s
 
 -- helper function
 getWinner :: Board -> Outcome
-getWinner Board {goalP1 = g1, goalP2 = g2} 
-  | g1 > g2 = Winner P1
-  | g2 > g1 = Winner P2
+getWinner (Board g1 s1 g2 s2 p)
+  | (g1 + sum s1) > (g2 + sum s2) = Winner P1
+  | (g2 + sum s2) > (g1 + sum s1) = Winner P2
   | otherwise = Tie
 
 -- takes a board and returns a board with the other player
 updateTurn :: Board -> Board
 updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
 
-
+validMoves :: Board -> [Int]
+validMoves (Board _ s1 _ _ P1) = [pos |pos <- [1..6], (s1 !! (pos -1)) /= 0 ]
+validMoved (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
