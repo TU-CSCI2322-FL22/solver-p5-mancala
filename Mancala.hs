@@ -44,17 +44,41 @@ move brd pos = if pos `elem` filtered then Just (makeMove brd pos) else Nothing
 
 -- pattern match and return the opposite slot for every position
 makeMove :: Board -> Int -> Board
-makeMove brd pos =
-  let (Board g1 s1 g2 s2 p) = brd
-      (slots,x) = getSide (Board g1 s1 g2 s2 p)
+makeMove brd@(Board g1 s1 g2 s2 p) pos =
+  let (slots,x) = getSide brd
       (s, beans) = insideMovement slots pos
-  in if x == 2 then  executePlay (Board g1 s g2 s2 p) beans 1 else executePlay (Board g1 s1 g2 s p) beans 3
+      newBoard = setSide brd s
+  in playInGoal newBoard beans
+
+playInGoal brd 0 = brd {playerTurn = opponent playerTurn brd}
+playInGoal brd 1 = incrementGoal brd 
+playInGoal brd x = let newBrd = incrementGoal brd
+                   in dropOnOppSide newBrd (x-1)
+
+playOppSide brd 0 = error "This should never happen"
+playOppSide brd x =
+  let (slots,x) = getOtherSide brd
+      (s, beans) = insideMovement slots pos
+      newBoard = setOtherSide brd s
+  in playMySide newBrd beans
+  
+playMySide brd 0 = brd {playerTurn = opponent playerTurn brd}
+
 
 
 -- gets the player's [Slot]
 getSide :: Board -> ([Slot],Int)
-getSide (Board g1 s1 g2 s2 p) = if p == P1 then (s1,2) else (s2,4)
+getSide (Board g1 s1 g2 s2 P1) = (s1,2)
+getSide (Board g1 s1 g2 s2 P2) = (s2,4)
 
+setSide :: Board -> [Slot] -> Board
+setSide brd newSlots = 
+  if playerTurn brd == P1 
+  then brd {slotsP1 = newSlots} 
+  else brd {slotsP2 = newSlots}
+  
+incrementGoal (Board g1 s1 g2 s2 P1)  =  (Board (g1+1) s1 g2 s2 P1)
+incrementGoal (Board g1 s1 g2 s2 P2)  =  (Board g1 s1 (g2+1) s2 P2)
 
 -- gets the other player's [Slot] 
 getOtherSide :: Board -> [Slot]
