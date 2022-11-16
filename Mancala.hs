@@ -3,13 +3,13 @@ import Data.Maybe
 
 type Bean = Int
 type Slot = Bean
-type FauxBoard = (Slot, [Slot], Slot, [Slot], Player)
-data Player = P1 | P2 deriving (Show, Eq, Read)
+data Player = P1 | P2 deriving (Show, Eq)
+
 data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
 data Outcome = Turn | Winner Player | Tie 
 
-board = Board {goalP1 = 0, slotsP1 = [4,4,4,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
+board = Board {goalP1 = 0, slotsP1 = [4,4,1,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
 --Show Function
 ------------------------------------
@@ -36,33 +36,33 @@ displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
 across :: Int -> Int
 across x = if x == 7 then 14 else 14 - x
 
+move :: Board -> Int -> Maybe Board
+move brd pos = if pos `elem` filtered then Just (makeMove brd pos) else Nothing
+  where moves = getSide brd
+        filtered = [x | x <- [1..6], not ((fst moves) !! (x-1) == 0)]
+
 -- pattern match and return the opposite slot for every position
-move :: Board -> Int -> Board
-move brd pos =
-  let (g1,s1,g2,s2,p) = breakdown brd
-      (slots,x) = getSide (g1,s1,g2,s2,p)
+makeMove :: Board -> Int -> Board
+makeMove brd pos =
+  let (Board g1 s1 g2 s2 p) = brd
+      (slots,x) = getSide (Board g1 s1 g2 s2 p)
       (s, beans) = insideMovement slots pos
-  in if x == 2 then executePlay (g1,s,g2,s2,p) beans 1 else executePlay (g1,s1,g2,s,p) beans 3
-
-
--- changes a board into a FauxBoard for pattern matching
-breakdown :: Board -> FauxBoard
-breakdown Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTurn = p} = (g1,s1,g2,s2,p)
+  in if x == 2 then  executePlay (Board g1 s g2 s2 p) beans 1 else executePlay (Board g1 s1 g2 s p) beans 3
 
 
 -- gets the player's [Slot]
-getSide :: FauxBoard -> ([Slot],Int)
-getSide (g1,s1,g2,s2,p) = if p == P1 then (s1,2) else (s2,4)
+getSide :: Board -> ([Slot],Int)
+getSide (Board g1 s1 g2 s2 p) = if p == P1 then (s1,2) else (s2,4)
 
 
 -- gets the other player's [Slot] 
-getOtherSide :: FauxBoard -> [Slot]
-getOtherSide (g1,s1,g2,s2,p) = if p == P1 then s2 else s1
+getOtherSide :: Board -> [Slot]
+getOtherSide (Board g1 s1 g2 s2 p) = if p == P1 then s2 else s1
 
 --Moves the Peices on one side of the board, does not delete the starting peice
 --needs to be renamed 
 sideMovement :: [Slot] -> Int -> Bean -> [Slot]
-sideMovement _ _ 0 = error "Shouldnt Have a zero bean input"
+--sideMovement _ _ 0 = error "Shouldnt Have a zero bean input"
 sideMovement slots pos beans = splitAndRebuild slots beans
 
 
@@ -91,47 +91,45 @@ newFront (b:bs) = b:(newFront bs)
 
 
 -- continues distributing beans until it runs out
-executePlay :: FauxBoard -> Bean -> Int -> Board
-executePlay (g1,s1,g2,s2,p) beans 1 = if beans > 0 then if p == P1 then executePlay (g1+1,s1,g2,s2,p) (beans-1) 4 else executePlay (g1,s1,g2,s2,p) (beans) 4 else Board g1 s1 g2 s2 p
-executePlay (g1,s1,g2,s2,p) beans 2 = if beans > 0 then executePlay (g1,sideMovement s1 1 beans,g2,s2,p) (beans-6) 1 else Board g1 s1 g2 s2 p
-executePlay (g1,s1,g2,s2,p) beans 3 = if beans > 0 then if p == P2 then executePlay (g1,s1,g2+1,s2,p) (beans-1) 2 else executePlay (g1,s1,g2,s2,p) (beans) 2 else Board g1 s1 g2 s2 p
-executePlay (g1,s1,g2,s2,p) beans 4 = if beans > 0 then executePlay (g1,s1,g2,sideMovement s2 1 beans,p) (beans-6) 3 else Board g1 s1 g2 s2 p
+executePlay :: Board -> Bean -> Int -> Board
+executePlay (Board g1 s1 g2 s2 p) beans 1 = if beans > 0 then if p == P1 then executePlay (Board (g1+1) s1 g2 s2 p) (beans-1) 4 else executePlay (Board g1 s1 g2 s2 p) (beans) 4 else Board g1 s1 g2 s2 p
+executePlay (Board g1 s1 g2 s2 p) beans 2 = if beans > 0 then executePlay (Board g1 (sideMovement s1 1 beans) g2 s2 p) (beans-6) 1 else Board g1 s1 g2 s2 p
+executePlay (Board g1 s1 g2 s2 p) beans 3 = if beans > 0 then if p == P2 then executePlay (Board g1 s1 (g2+1) s2 p) (beans-1) 2 else executePlay (Board g1 s1 g2 s2 p) (beans) 2 else Board g1 s1 g2 s2 p
+executePlay (Board g1 s1 g2 s2 p) beans 4 = if beans > 0 then executePlay (Board g1 s1 g2 (sideMovement s2 1 beans) p) (beans-6) 3 else Board g1 s1 g2 s2 p
 
 -- check if a capture is possible and if so then caputre else return the board
 checkCapture :: Board -> Int -> Board
 checkCapture brd pos =
-  let fauxBrd = breakdown brd
-      currentSide = getSide fauxBrd
+  let currentSide = getSide brd
   in if (fst currentSide !! (pos - 1)) == 1 then capture brd pos else brd
 
 -- does the operations for checkCapture
 -- needs to take a FauxBoard
 capture :: Board -> Int -> Board
 capture brd pos =
-  let fauxBrd = breakdown brd
-      currentSide = getSide fauxBrd
-      otherSide = getOtherSide fauxBrd
-      goal1 (g1,_,_,_,p) beans = if p == P1 then g1 + beans else g1
-      goal2 (_,_,g2,_,p) beans = if p == P2 then g2 + beans else g2
+  let currentSide = getSide brd
+      otherSide = getOtherSide brd
+      goal1 (Board g1 _ _ _ p) beans = if p == P1 then g1 + beans else g1
+      goal2 (Board _ _ g2 _ p) beans = if p == P2 then g2 + beans else g2
       beanTotal = 1 + (otherSide !! (pos-1))
-  in  Board (goal1 fauxBrd beanTotal) (makePosZero (getSide1 fauxBrd) pos) (goal2 fauxBrd beanTotal) (makePosZero (getSide2 fauxBrd) pos) (getPlayer (fauxBrd))
+  in  Board (goal1 brd beanTotal) (makePosZero (getSide1 brd) pos) (goal2 brd beanTotal) (makePosZero (getSide2 brd) pos) (getPlayer (brd))
 
 -- returns player
-getPlayer :: FauxBoard -> Player
-getPlayer (_,_,_,_,p) = p
+getPlayer :: Board -> Player
+getPlayer (Board _ _ _ _ p) = p
 
 --returns slotsP1
-getSide1 :: FauxBoard -> [Slot]
-getSide1 (_,s1,_,_,_) = s1
+getSide1 :: Board -> [Slot]
+getSide1 (Board _ s1 _ _ _) = s1
 
 --returns slotsP2
-getSide2 :: FauxBoard -> [Slot]
-getSide2 (_,_,_,s2,_) = s2
+getSide2 :: Board -> [Slot]
+getSide2 (Board _ _ _ s2 _) = s2
 
 -- changes the value of a slot at a position to 0
 makePosZero :: [Slot] -> Int -> [Slot]
 makePosZero slots pos = frontHalf ++ [0] ++ backHalf
-  where frontHalf = tail (fst(splitAt (pos) slots))
+  where frontHalf = init (fst(splitAt (pos) slots))
         backHalf = snd(splitAt (pos) slots)
 
 
