@@ -1,4 +1,4 @@
-import Mancala.hs
+import Mancala
 
 main :: IO ()
 main = 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="Everything seems to work but might need more move testing on move and capture. Eleminated fauxBoard">
-      <change afterPath="$PROJECT_DIR$/Solver.hs" afterDir="false" />
+    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="Fixed update outcome and get winner I think. Also added Solver.hs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Mancala.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Mancala.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IO.hs" beforeDir="false" afterPath="$PROJECT_DIR$/IO.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.hs" beforeDir="false" afterPath="$PROJECT_DIR$/main.hs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,7 +93,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668194468776</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Fixed update outcome and get winner I think. Also added Solver.hs">
+      <created>1668632178559</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1668632178559</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -111,6 +118,7 @@
     <MESSAGE value="Now THIS is awesome" />
     <MESSAGE value="Capture works" />
     <MESSAGE value="Everything seems to work but might need more move testing on move and capture. Eleminated fauxBoard" />
-    <option name="LAST_COMMIT_MESSAGE" value="Everything seems to work but might need more move testing on move and capture. Eleminated fauxBoard" />
+    <MESSAGE value="Fixed update outcome and get winner I think. Also added Solver.hs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed update outcome and get winner I think. Also added Solver.hs" />
   </component>
 </project>
