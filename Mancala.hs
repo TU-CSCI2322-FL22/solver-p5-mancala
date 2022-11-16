@@ -157,4 +157,3 @@ getWinner Board {goalP1 = g1, goalP2 = g2}
 updateTurn :: Board -> Board
 updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
 
-
