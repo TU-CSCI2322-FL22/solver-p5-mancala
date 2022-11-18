@@ -4,11 +4,11 @@ import Data.Maybe
 
 type Bean = Int
 type Slot = Bean
-data Player = P1 | P2 deriving (Show, Eq)
+data Player = P1 | P2 deriving (Show, Eq, Ord)
 
-data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
-                    goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
-data Outcome = Turn | Winner Player | Tie deriving (Show, Eq)
+data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot],
+                    goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq, Ord) --add record notation
+data Outcome =  Winner Player | Tie deriving (Show, Eq)
 
 board = Board {goalP1 = 0, slotsP1 = [4,4,0,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
@@ -20,7 +20,7 @@ showBoard Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTur
   where border = "@><><><><><><><@><><><><><><><@\n"
         body = border ++ "|  "++displaySideOne s1++"|  |\n"++ "|"++show g1++    " |-----------------------| "++show g2++"|\n" ++ "|  "++displaySideTwo s2 ++"|  |\n"++ border
 
--- displayes slotsP1 backwards with border 
+-- displayes slotsP1 backwards with border
 displaySideOne :: [Slot] -> String
 displaySideOne [] = ""
 displaySideOne (b:bs) = displaySideOne bs ++ "| "++show b++" "
@@ -31,7 +31,7 @@ displaySideTwo [] = ""
 displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
 
 
---Gameplay Functions 
+--Gameplay Functions
 ----------------------------------
 
 across :: Int -> Int
@@ -42,7 +42,7 @@ move brd pos = if pos `elem` filtered then Just (makeMove brd pos) else Nothing
   where moves = getSide brd
         filtered = [x | x <- [1..6], not ((fst moves) !! (x-1) == 0)]
 
--- pattern match and return the opposite slot for every position
+
 makeMove :: Board -> Int -> Board
 makeMove brd pos =
   let (Board g1 s1 g2 s2 p) = brd
@@ -56,12 +56,12 @@ getSide :: Board -> ([Slot],Int)
 getSide (Board g1 s1 g2 s2 p) = if p == P1 then (s1,2) else (s2,4)
 
 
--- gets the other player's [Slot] 
+-- gets the other player's [Slot]
 getOtherSide :: Board -> [Slot]
 getOtherSide (Board g1 s1 g2 s2 p) = if p == P1 then s2 else s1
 
 --Moves the Peices on one side of the board, does not delete the starting peice
---needs to be renamed 
+--needs to be renamed
 sideMovement :: [Slot] -> Int -> Bean -> [Slot]
 --sideMovement _ _ 0 = error "Shouldnt Have a zero bean input"
 sideMovement slots pos beans = splitAndRebuild slots beans
@@ -93,6 +93,7 @@ newFront (b:bs) = b:(newFront bs)
 
 -- continues distributing beans until it runs out
 executePlay :: Board -> Bean -> Int -> Board
+--executePlay (Board g1 s1 g2 s2 p) 0 3 =
 executePlay (Board g1 s1 g2 s2 p) beans 1 = if beans > 0 then if p == P1 then executePlay (Board (g1+1) s1 g2 s2 p) (beans-1) 4 else executePlay (Board g1 s1 g2 s2 p) (beans) 4 else Board g1 s1 g2 s2 p
 executePlay (Board g1 s1 g2 s2 p) beans 2 = if beans > 0 then executePlay (Board g1 (sideMovement s1 1 beans) g2 s2 p) (beans-6) 1 else Board g1 s1 g2 s2 p
 executePlay (Board g1 s1 g2 s2 p) beans 3 = if beans > 0 then if p == P2 then executePlay (Board g1 s1 (g2+1) s2 p) (beans-1) 2 else executePlay (Board g1 s1 g2 s2 p) (beans) 2 else Board g1 s1 g2 s2 p
@@ -133,14 +134,23 @@ makePosZero slots pos = frontHalf ++ [0] ++ backHalf
   where frontHalf = init (fst(splitAt (pos) slots))
         backHalf = snd(splitAt (pos) slots)
 
+-- returns value of slot at index. First int is starting pos for current player, second int is number moved
+boardIndexer :: Board -> Int -> Int -> Int
+boardIndexer brd@(Board g1 s1 g2 s2 P1) start move = if start + move <= 6 then s1 !! (start + move)
+  else undefined
 
-
+-- an actual complete turn
+{-
+turn:: Board -> Int -> Board
+turn brd@(Board _ s1 _ s2 P1) pos = if
+  where (Board _ cs1 _ cs2 _) = move brd pos
+-}
 -- GameState Functions
 ------------------------------------
 
 --takes a board and returns: Turn, Winner, or Tie
-updateOutcome :: Board -> Outcome
-updateOutcome Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p} = if not (sum s1 == 0 && sum s2 == 0) then Turn else getWinner board 
+updateOutcome :: Board -> Maybe Outcome
+updateOutcome board@(Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p}) = if not (sum s1 == 0 || sum s2 == 0) then Nothing else Just $ getWinner board
 
 
 -- helper function
@@ -156,5 +166,6 @@ updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTu
 
 validMoves :: Board -> [Int]
 validMoves (Board _ s1 _ _ P1) = [pos |pos <- [1..6], (s1 !! (pos -1)) /= 0 ]
-validMoved (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
+validMoves (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
+validMoves x = error $ show x
 
