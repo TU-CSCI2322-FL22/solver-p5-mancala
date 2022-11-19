@@ -164,8 +164,12 @@ getWinner (Board g1 s1 g2 s2 p)
 updateTurn :: Board -> Board
 updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
 
+--zips up a list of slots with its position, POSITION DOES NOT START AT 0
+zipSlots :: [Slot] -> [(Slot,Int)]
+zipSlots slots = zip slots [1..length slots]
+
+--Checks if it is possible to move from a slot and then returns a list of all possible movement positions
 validMoves :: Board -> [Int]
-validMoves (Board _ s1 _ _ P1) = [pos |pos <- [1..6], (s1 !! (pos -1)) /= 0 ]
-validMoves (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
-validMoves x = error $ show x
+validMoves (Board _ s1 _ _ P1) = [x|(slot,x) <- zipSlots s1, slot /= 0]
+validMoves (Board _ _ _ s2 P2) = [x|(slot,x) <- zipSlots s2, slot /= 0]
 
