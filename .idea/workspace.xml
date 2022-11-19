@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="Fixed update outcome and get winner I think. Also added Solver.hs">
+    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="whoWillWin and bestMove appear to be working, more testing required for bestMove especially. Might do some strange shit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IO.hs" beforeDir="false" afterPath="$PROJECT_DIR$/IO.hs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.hs" beforeDir="false" afterPath="$PROJECT_DIR$/main.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Mancala.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Mancala.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Solver.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Solver.hs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +100,21 @@
       <option name="project" value="LOCAL" />
       <updated>1668632178559</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed all the import statements">
+      <created>1668632413655</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1668632413655</updated>
+    </task>
+    <task id="LOCAL-00006" summary="whoWillWin and bestMove appear to be working, more testing required for bestMove especially. Might do some strange shit">
+      <created>1668787464584</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1668787464584</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -108,7 +122,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="Turn-Function" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -119,6 +145,8 @@
     <MESSAGE value="Capture works" />
     <MESSAGE value="Everything seems to work but might need more move testing on move and capture. Eleminated fauxBoard" />
     <MESSAGE value="Fixed update outcome and get winner I think. Also added Solver.hs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed update outcome and get winner I think. Also added Solver.hs" />
+    <MESSAGE value="Fixed all the import statements" />
+    <MESSAGE value="whoWillWin and bestMove appear to be working, more testing required for bestMove especially. Might do some strange shit" />
+    <option name="LAST_COMMIT_MESSAGE" value="whoWillWin and bestMove appear to be working, more testing required for bestMove especially. Might do some strange shit" />
   </component>
 </project>
