@@ -4,11 +4,11 @@ import Data.Maybe
 
 type Bean = Int
 type Slot = Bean
-data Player = P1 | P2 deriving (Show, Eq)
+data Player = P1 | P2 deriving (Show, Eq, Ord)
 
-data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot], 
-                    goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq) --add record notation 
-data Outcome = Turn | Winner Player | Tie deriving (Show, Eq)
+data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot],
+                    goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq, Ord) --add record notation
+data Outcome =  Winner Player | Tie deriving (Show, Eq)
 
 board = Board {goalP1 = 0, slotsP1 = [4,4,1,0,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
@@ -20,7 +20,7 @@ showBoard Board {goalP1 = g1, slotsP1 = s1, goalP2 = g2, slotsP2 = s2, playerTur
   where border = "@><><><><><><><@><><><><><><><@\n"
         body = border ++ "|  "++displaySideOne s1++"|  |\n"++ "|"++show g1++    " |-----------------------| "++show g2++"|\n" ++ "|  "++displaySideTwo s2 ++"|  |\n"++ border
 
--- displayes slotsP1 backwards with border 
+-- displayes slotsP1 backwards with border
 displaySideOne :: [Slot] -> String
 displaySideOne [] = ""
 displaySideOne (b:bs) = displaySideOne bs ++ "| "++show b++" "
@@ -31,7 +31,7 @@ displaySideTwo [] = ""
 displaySideTwo (b:bs) = "| "++show b++" "++displaySideTwo bs
 
 
---Gameplay Functions 
+--Gameplay Functions
 ----------------------------------
 
 across :: Int -> Int
@@ -42,7 +42,7 @@ move brd pos = if pos `elem` filtered then Just (makeMove brd pos) else Nothing
   where moves = getSide brd
         filtered = [x | x <- [1..6], not (moves !! (x-1) == 0)]
 
--- pattern match and return the opposite slot for every position
+
 makeMove :: Board -> Int -> Board
 makeMove brd@(Board g1 s1 g2 s2 p) pos =
   let slots = getSide brd
@@ -193,14 +193,23 @@ makePosZero slots pos =
       (front, beans:back) -> (front ++ [0] ++ back, beans)
       _ -> error "AAAAAH"
 
+-- returns value of slot at index. First int is starting pos for current player, second int is number moved
+boardIndexer :: Board -> Int -> Int -> Int
+boardIndexer brd@(Board g1 s1 g2 s2 P1) start move = if start + move <= 6 then s1 !! (start + move)
+  else undefined
 
-
+-- an actual complete turn
+{-
+turn:: Board -> Int -> Board
+turn brd@(Board _ s1 _ s2 P1) pos = if
+  where (Board _ cs1 _ cs2 _) = move brd pos
+-}
 -- GameState Functions
 ------------------------------------
 
 --takes a board and returns: Turn, Winner, or Tie
-updateOutcome :: Board -> Outcome
-updateOutcome Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p} = if not (sum s1 == 0 && sum s2 == 0) then Turn else getWinner board 
+updateOutcome :: Board -> Maybe Outcome
+updateOutcome board@(Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p}) = if not (sum s1 == 0 || sum s2 == 0) then Nothing else Just $ getWinner board
 
 
 -- helper function
@@ -214,7 +223,12 @@ getWinner (Board g1 s1 g2 s2 p)
 updateTurn :: Board -> Board
 updateTurn Board {slotsP1 = s1, goalP1 = g1, slotsP2 = s2, goalP2 = g2, playerTurn = p} = if p == P1 then Board g1 s1 g2 s2 P2 else Board g1 s1 g2 s2 P1
 
+--zips up a list of slots with its position, POSITION DOES NOT START AT 0
+zipSlots :: [Slot] -> [(Slot,Int)]
+zipSlots slots = zip slots [1..length slots]
+
+--Checks if it is possible to move from a slot and then returns a list of all possible movement positions
 validMoves :: Board -> [Int]
-validMoves (Board _ s1 _ _ P1) = [pos |pos <- [1..6], (s1 !! (pos -1)) /= 0 ]
-validMoved (Board _ _ _ s2 P2) = [pos |pos <- [1..6], (s2 !! (pos -1)) /= 0 ]
+validMoves (Board _ s1 _ _ P1) = [x|(slot,x) <- zipSlots s1, slot /= 0]
+validMoves (Board _ _ _ s2 P2) = [x|(slot,x) <- zipSlots s2, slot /= 0]
 
