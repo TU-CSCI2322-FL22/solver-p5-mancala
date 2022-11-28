@@ -3,7 +3,9 @@ import Mancala
 import Data.Maybe
 import Debug.Trace
 
-testBoard =  Board {goalP1 = 2, slotsP1 = [0,0,0,7,1,0], goalP2 = 1, slotsP2 = [0,0,1,0,0,0], playerTurn = P1}
+testBoard = Board {goalP1 = 0, slotsP1 = [0,0,1,0,0,0], goalP2 = 0, slotsP2 = [0,0,0,0,2,6], playerTurn = P1}
+--This Case gives an error
+errorBoard =  Board {goalP1 = 2, slotsP1 = [0,0,0,0,1,7], goalP2 = 1, slotsP2 = [0,0,1,0,0,0], playerTurn = P1}
 testOutcomes = [Winner P2, Tie]
 
 whoWillWin:: Board -> Outcome
