@@ -10,7 +10,7 @@ data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot],
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq, Ord) --add record notation
 data Outcome =  Winner Player | Tie deriving (Show, Eq)
 
-board = Board {goalP1 = 0, slotsP1 = [4,4,1,0,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
+board = Board {goalP1 = 0, slotsP1 = [4,4,1,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 
 --Show Function
 ------------------------------------
@@ -48,7 +48,7 @@ makeMove brd@(Board g1 s1 g2 s2 p) pos =
   let slots = getSide brd
       (startCount, s, beans) = insideMovement slots pos
       newBoard = setSide brd s
-      finalSquare = (pos + startCount) `mod` 13
+      finalSquare = ((pos + startCount -1) `mod` 13) +1
       finalBoard = playInGoal newBoard beans 
       newPl = playerTurn finalBoard
   in (checkCapture (finalBoard {playerTurn = p}) finalSquare) {playerTurn = newPl}
