@@ -70,8 +70,7 @@ playOppSide brd x
                 in playMySide newBrd rem
   
 playMySide brd x  
-  | x <= 0 = brd {playerTurn = opponent (playerTurn brd)}
-  | x <= 6 = checkCapture newBrd rem 
+  | x <= 6 = brd {playerTurn = opponent (playerTurn brd)}
   | otherwise = playInGoal newBrd rem
     where slots = getSide brd
           (s, rem) = sideMovement slots 1 x
@@ -156,6 +155,7 @@ newFront (b:bs) = b:(newFront bs)
 checkCapture :: Board -> Int -> Board
 checkCapture brd pos
   | pos > 6 = brd
+  | pos == 0 = error "pos is 0, it shouldnt be"
   | otherwise =  
     let mySide = getSide brd
         otherSide = getOtherSide brd
@@ -212,7 +212,7 @@ updateOutcome :: Board -> Maybe Outcome
 updateOutcome board@(Board {slotsP1 = s1, slotsP2 = s2, playerTurn = p}) = if not (sum s1 == 0 || sum s2 == 0) then Nothing else Just $ getWinner board
 
 
--- helper function
+-- helper function/ unsafe check for winner DONT USE PLEASE IT MIGHT BREAK THINGS
 getWinner :: Board -> Outcome
 getWinner (Board g1 s1 g2 s2 p)
   | (g1 + sum s1) > (g2 + sum s2) = Winner P1

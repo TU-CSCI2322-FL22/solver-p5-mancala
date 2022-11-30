@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="Added error case in Solver.hs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IO.hs" beforeDir="false" afterPath="$PROJECT_DIR$/IO.hs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Mancala.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Mancala.hs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Solver.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Solver.hs" afterDir="false" />
     </list>
