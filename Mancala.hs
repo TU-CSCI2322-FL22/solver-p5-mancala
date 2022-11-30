@@ -48,7 +48,7 @@ makeMove brd@(Board g1 s1 g2 s2 p) pos =
   let slots = getSide brd
       (startCount, s, beans) = insideMovement slots pos
       newBoard = setSide brd s
-      finalSquare = (pos + startCount) `mod` 13
+      finalSquare = ((pos + startCount - 1) `mod` 13) + 1
       finalBoard = playInGoal newBoard beans 
       newPl = playerTurn finalBoard
   in (checkCapture (finalBoard {playerTurn = p}) finalSquare) {playerTurn = newPl}

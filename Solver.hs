@@ -1,11 +1,12 @@
 module Solver where
 import Mancala
 import Data.Maybe
+import Data.Ratio
 import Debug.Trace
 
 testBoard = Board {goalP1 = 0, slotsP1 = [0,0,1,0,0,0], goalP2 = 0, slotsP2 = [0,0,0,0,2,6], playerTurn = P1}
 --This Case gives an error
-errorBoard =  Board {goalP1 = 2, slotsP1 = [0,0,0,0,1,7], goalP2 = 1, slotsP2 = [0,0,1,0,0,0], playerTurn = P1}
+errorBoard =  Board {goalP1 = 1, slotsP1 = [4,4,4,0,5,5], goalP2 = 1, slotsP2 = [5,4,4,4,4,4], playerTurn = P1}
 testOutcomes = [Winner P2, Tie]
 
 whoWillWin:: Board -> Outcome
@@ -45,3 +46,15 @@ bestMove brd@(Board g1 s1 g2 s2 p) =
           playerTies = filter (\(a,b) -> a == Tie) outcomes
       in if lookup (Winner p) playerWins /= Nothing then snd (snd(head playerWins)) else if lookup Tie playerTies /= Nothing then snd (snd(head playerTies)) else snd (head moveBoards)
     Just outcome -> error "Already won the game, no moves possible"
+
+bestMoveBounded:: Board -> Int -> Int
+bestMoveBounded brd@(Board g1 s1 g2 s2 p) 0 = getBoardState brd
+bestMoveBounded brd@(Board g1 s1 g2 s2 p) depth=
+      let moveBoards = catMaybes [ maybeMover ((move brd pos),pos)| pos <- validMoves brd]
+          outcomes =  [(bestMoveBounded (fst brd) depth -1,brd)|brd <- moveBoards]
+          bestScore = [(getBoardState brd, mve)|(_,(brd,mve)) <- outcomes]
+      in snd (maximum bestScore)
+
+getBoardState :: Board -> Int
+getBoardState (Board g1 s1 _ _ P1) = ( g1) + sum s1
+getBoardState (Board _ _ g2 s2 P2) = ( g2) + sum s2
