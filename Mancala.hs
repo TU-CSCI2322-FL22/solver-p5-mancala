@@ -4,7 +4,8 @@ import Data.Maybe
 
 type Bean = Int
 type Slot = Bean
-data Player = P1 | P2 deriving (Show, Eq, Ord)
+
+data Player = P1 | P2 deriving (Show, Eq, Read, Ord)
 
 data Board = Board {goalP1 :: Slot, slotsP1 :: [Slot],
                     goalP2 :: Slot, slotsP2 :: [Slot], playerTurn :: Player} deriving (Show, Eq, Ord) --add record notation
