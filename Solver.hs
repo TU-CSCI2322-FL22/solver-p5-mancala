@@ -7,7 +7,12 @@ import Debug.Trace
 testBoard = Board {goalP1 = 0, slotsP1 = [0,1,0,0,0,2], goalP2 = 0, slotsP2 = [0,0,2,4,0,0], playerTurn = P1}
 --This Case gives an error
 errorBoard =  Board {goalP1 = 1, slotsP1 = [4,4,5,4,4,4], goalP2 = 1, slotsP2 = [4,4,5,4,4,4], playerTurn = P1}
+startBoard = Board {goalP1 = 0, slotsP1 = [4,4,4,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
+--bestMoveBounded captureBoard 1 = 3, bestMoveBounded captureBoard 3 = 2
+captureBoard = Board {goalP1 = 0, slotsP1 = [0,5,1,0,0,0], goalP2 = 0, slotsP2 = [20,0,10,0,0,0], playerTurn = P1}
+orderBoard = Board {goalP1 = 0, slotsP1 = [6,5,4,3,2,1], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 testOutcomes = [Winner P2, Tie]
+
 
 whoWillWin:: Board -> Outcome
 whoWillWin brd@(Board g1 s1 g2 s2 p) =
