@@ -1,5 +1,6 @@
 module IO where
 import Mancala
+import Solver
 import System.Console.GetOpt
 
 -- "0 1 2 3 4 5 6 0 1 2 3 4 5 6 P1"
@@ -35,7 +36,7 @@ loadGame path =
 
 -- can complete when the algorithm is complete
 putWinner :: Board -> IO Player
-putWinner brd = case (updateOutcome brd) of
-		   Winner P1 -> return P1
-		   Winner P2 -> return P2
+putWinner brd = case  (updateOutcome brd) of
+		   Just (Winner P2) -> return P2
+		   Just (Winner P1) -> return P1
 		   _ -> error "No Winner"
