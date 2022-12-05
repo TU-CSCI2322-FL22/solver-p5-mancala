@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="Added error case in Solver.hs">
+    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IO.hs" beforeDir="false" afterPath="$PROJECT_DIR$/IO.hs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Mancala.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Mancala.hs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Solver.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Solver.hs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.hs" beforeDir="false" afterPath="$PROJECT_DIR$/main.hs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,18 +37,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;full.screen.before.presentation.mode&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "full.screen.before.presentation.mode": "false"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;Haskell&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "Haskell"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="solver-p5-mancala" />
@@ -122,7 +122,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669660296611</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)">
+      <created>1669842578405</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1669842578405</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -156,6 +163,7 @@
     <MESSAGE value="Fixed all the import statements" />
     <MESSAGE value="whoWillWin and bestMove appear to be working, more testing required for bestMove especially. Might do some strange shit" />
     <MESSAGE value="Added error case in Solver.hs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added error case in Solver.hs" />
+    <MESSAGE value="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)" />
+    <option name="LAST_COMMIT_MESSAGE" value="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)" />
   </component>
 </project>

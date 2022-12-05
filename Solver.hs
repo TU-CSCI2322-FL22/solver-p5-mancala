@@ -4,16 +4,24 @@ import Data.Maybe
 import Data.Ratio
 import Debug.Trace
 
+
+type Score = Int
+
 testBoard = Board {goalP1 = 0, slotsP1 = [0,1,0,0,0,2], goalP2 = 0, slotsP2 = [0,0,2,4,0,0], playerTurn = P1}
 --This Case gives an error
 errorBoard =  Board {goalP1 = 1, slotsP1 = [4,4,5,4,4,4], goalP2 = 1, slotsP2 = [4,4,5,4,4,4], playerTurn = P1}
+startBoard = Board {goalP1 = 0, slotsP1 = [4,4,4,4,4,4], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
+--bestMoveBounded captureBoard 1 = 3, bestMoveBounded captureBoard 3 = 2
+captureBoard = Board {goalP1 = 0, slotsP1 = [0,5,1,0,0,0], goalP2 = 0, slotsP2 = [20,0,10,0,0,0], playerTurn = P1}
+orderBoard = Board {goalP1 = 0, slotsP1 = [6,5,4,3,2,1], goalP2 = 0, slotsP2 = [4,4,4,4,4,4], playerTurn = P1}
 testOutcomes = [Winner P2, Tie]
+
 
 whoWillWin:: Board -> Outcome
 whoWillWin brd@(Board g1 s1 g2 s2 p) =
   case updateOutcome brd of
     Nothing ->
-      let moveBoards =   catMaybes [traceShowId ( (move brd pos))| pos <- validMoves brd]
+      let moveBoards =   catMaybes [{-traceShowId-} ( (move brd pos))| pos <- validMoves brd]
           outcomes =  [whoWillWin brd|brd <- moveBoards]
       in {-traceShow (brd,moveBoards,outcomes)-} bestOutcome outcomes p
     Just outcome -> outcome
@@ -47,27 +55,22 @@ bestMove brd@(Board g1 s1 g2 s2 p) =
       in if lookup (Winner p) playerWins /= Nothing then snd (snd(head playerWins)) else if lookup Tie playerTies /= Nothing then snd (snd(head playerTies)) else snd (head moveBoards)
     Just outcome -> error "Already won the game, no moves possible"
 
-whoMightWin:: Board -> Int -> Outcome
-whoMightWin brd@(Board g1 s1 g2 s2 p) 0
-  | getBoardState brd < 0 = Winner P2
-  | getBoardState brd > 0 = Winner P1
-  | getBoardState brd == 0 = Tie
+whoMightWin:: Board -> Int -> Score
+whoMightWin brd@(Board g1 s1 g2 s2 p) 0 = getBoardState brd
 whoMightWin brd@(Board g1 s1 g2 s2 p) depth =
   case updateOutcome brd of
     Nothing ->
       let moveBoards =   catMaybes [{-traceShowId-} ( (move brd pos))| pos <- validMoves brd]
           outcomes =  [whoMightWin brd (depth - 1)|brd <- moveBoards]
-      in {-traceShow (brd,moveBoards,outcomes)-} bestOutcome outcomes p
-    Just outcome -> outcome
+      in {-traceShow (brd,moveBoards,outcomes)-} maximum outcomes
+    Just outcome -> getBoardState brd
 
 bestMoveBounded:: Board -> Int -> Int
 bestMoveBounded brd@(Board g1 s1 g2 s2 p) 0 = getBoardState brd
 bestMoveBounded brd@(Board g1 s1 g2 s2 p) depth=
       let moveBoards = catMaybes [ (maybeMover ((move brd pos),pos))| pos <- validMoves brd]
           outcomes =  [(whoMightWin (fst brd) depth ,brd)|brd <- moveBoards]
-          playerWins = filter (\(a,b) -> a == Winner p) outcomes
-          playerTies = filter (\(a,b) -> a == Tie) outcomes
-      in if lookup (Winner p) playerWins /= Nothing then snd(snd(head playerWins)) else if lookup Tie playerTies /= Nothing then snd(snd(head playerTies)) else snd (head moveBoards)
+      in snd (snd (maximum outcomes))
 
 getBoardState :: Board -> Int
 getBoardState (Board g1 s1 g2 s2 _) = ((g1*2) + sum s1) - ((g2 * 2) + sum s2)
