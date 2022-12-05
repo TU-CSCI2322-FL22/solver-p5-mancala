@@ -5,6 +5,7 @@ import System.Console.GetOpt
 
 -- "0 1 2 3 4 5 6 0 1 2 3 4 5 6 P1"
 
+
 readGame :: String -> Maybe Board
 readGame str = readGameHelp (map (\x -> read x :: Slot)(init split)) (read (last split) :: Player)
         where split = words str
