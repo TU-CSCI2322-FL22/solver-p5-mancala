@@ -36,8 +36,8 @@ loadGame path =
 
 
 -- can complete when the algorithm is complete
-putWinner :: Board -> IO Player
+putWinner :: Board -> IO ()
 putWinner brd = case  (updateOutcome brd) of
-		   Just (Winner P2) -> return P2
-		   Just (Winner P1) -> return P1
-		   _ -> error "No Winner"
+		   Just (Winner P2) -> putStrLn "P2 Wins"
+		   Just (Winner P1) -> putStrLn "P1 Wins"
+		   _ -> putStrLn "No Winner"

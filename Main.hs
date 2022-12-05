@@ -16,7 +16,7 @@ defaultDepth = 6
 options :: [OptDescr Flag]
 options = [Option ['h'] ["help"] (NoArg Help) "Help"
           ,Option ['w'] ["win"] (NoArg Win) "Uses defaults to compute winner"
-          ,Option ['f'] ["file"] (ReqArg File "Path") "Takes a filePath to a board save"
+--          ,Option ['f'] ["file"] (ReqArg File "Path") "Takes a filePath to a board save"
           ,Option ['d'] ["depth"] (ReqArg Depth "#") "Sets depth to #"
           ,Option ['m'] ["move"] (ReqArg Move "#") "Moves Beans at Slot Pos #"]
 
@@ -66,5 +66,8 @@ main =
 chooseAction :: [Flag] -> Board -> IO ()
 chooseAction flags brd
   | Win `elem` flags = putStrLn (show (whoWillWin brd))
-  | hasMove flags = putStrLn (show(move brd (getPos flags)))
+  | hasMove flags = 
+	case (move brd (getPos flags)) of
+	   Nothing -> putStrLn "errrrrror"
+	   Just x -> putStrLn $ showGame x
   | otherwise = putStrLn (show(bestMoveBounded brd (getDepth flags)))
