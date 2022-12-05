@@ -1,6 +1,8 @@
 module IO where
 import Mancala
 import System.Console.GetOpt
+import System.IO
+import System.Environment
 
 -- "0 1 2 3 4 5 6 0 1 2 3 4 5 6 P1"
 
@@ -34,8 +36,33 @@ loadGame path =
 
 
 -- can complete when the algorithm is complete
-putWinner :: Board -> IO Player
-putWinner brd = case (updateOutcome brd) of
-		   Winner P1 -> return P1
-		   Winner P2 -> return P2
-		   _ -> error "No Winner"
+putWinner :: Board -> IO ()
+putWinner brd = do
+		   case (updateOutcome brd) of
+		      Just (Winner P1) -> putStrLn "P1 Wins"
+		      Just (Winner P2) -> putStrLn "P2 Wins"
+		      _ -> putStrLn "No Winner"
+		   return ()
+
+--command line interface
+
+data Flag = Winnerr| Depth String | Help | Move String | Verbose deriving (Show, Eq)
+
+options :: [OptDescr Flag]
+options = [ Option ['w'] ["winner"] (NoArg Winnerr)    "Print out the best move, using an exhaustive search (no cut-off depth)."
+	  , Option ['d'] ["depth"]  (ReqArg Depth "#") "Use # as a cutoff depth, instead of your default."
+	  , Option ['h'] ["help"]   (NoArg Help)      "Print out a help message and quit the program."   
+	  , Option ['m'] ["move"]   (ReqArg Move "#") "Make # and print out the resulting board, in the input format, to stdout." 
+	  , Option ['v'] ["verbose"] (NoArg Verbose)  "Output both the move and a description of how good it is: win, lose, tie, or a rating." 
+	  ]
+
+main :: IO ()
+main = 
+  do args <- getArgs
+     let (flags, inputs, error) = getOpt Permute options args
+--input file stuff   
+     if Help `elem` flags || (not $ null error)
+     then putStrLn $ usageInfo "Usage: [options] [file]" options
+     else do 
+       putStrLn $ showGame board
+       return ()
