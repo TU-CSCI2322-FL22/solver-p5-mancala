@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IO.hs" beforeDir="false" afterPath="$PROJECT_DIR$/IO.hs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Solver.hs" beforeDir="false" afterPath="$PROJECT_DIR$/Solver.hs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.hs" beforeDir="false" afterPath="$PROJECT_DIR$/main.hs" afterDir="false" />
-    </list>
+    <list default="true" id="001f071c-ea0e-48e8-97d6-b41182a657d0" name="Changes" comment="bestMoveBounded and whoMightWin appear to work!! (dont ask why this is in commandLine you wouldnt understand)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,18 +32,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "full.screen.before.presentation.mode": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;full.screen.before.presentation.mode&quot;: &quot;false&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Haskell"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Haskell&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="solver-p5-mancala" />
