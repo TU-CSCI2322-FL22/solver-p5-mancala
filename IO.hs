@@ -40,4 +40,5 @@ putWinner :: Board -> IO ()
 putWinner brd = case  (updateOutcome brd) of
 		   Just (Winner P2) -> putStrLn "P2 Wins"
 		   Just (Winner P1) -> putStrLn "P1 Wins"
-		   _ -> putStrLn "No Winner"
+		   Just Tie -> putStrLn "Tie"
+		   Nothing -> putStrLn ("Rating of " ++ show (getBoardState brd))

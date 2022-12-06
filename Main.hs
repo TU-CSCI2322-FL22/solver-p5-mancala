@@ -18,7 +18,9 @@ options = [Option ['h'] ["help"] (NoArg Help) "Help"
           ,Option ['w'] ["win"] (NoArg Win) "Uses defaults to compute winner"
 --          ,Option ['f'] ["file"] (ReqArg File "Path") "Takes a filePath to a board save"
           ,Option ['d'] ["depth"] (ReqArg Depth "#") "Sets depth to #"
-          ,Option ['m'] ["move"] (ReqArg Move "#") "Moves Beans at Slot Pos #"]
+          ,Option ['m'] ["move"] (ReqArg Move "#") "Moves Beans at Slot Pos #"
+	  ,Option ['v'] ["verbose"] (NoArg Verbose) "Output both move and rating"
+	  ]
 
 getDepth :: [Flag] -> Int
 getDepth [] = defaultDepth
@@ -35,6 +37,12 @@ getPos ((Move x):_) =
     Nothing -> error "invalid pos input"
     Just move -> move
 getPos (_:flags) = getPos flags
+
+
+hasVerbose :: [Flag] -> Bool
+hasVerbose [] = False
+hasVerbose ((Verbose):_) = True
+hasVerbose (_:flags) = hasVerbose flags
 
 hasMove :: [Flag] -> Bool
 hasMove [] = False
@@ -68,6 +76,11 @@ chooseAction flags brd
   | Win `elem` flags = putStrLn (show (whoWillWin brd))
   | hasMove flags = 
 	case (move brd (getPos flags)) of
-	   Nothing -> putStrLn "errrrrror"
+	   Nothing -> putStrLn "Invalid Move"
 	   Just x -> putStrLn $ showGame x
+  | hasVerbose flags = let brd_ = bestMove brd
+	in case move brd brd_ of
+             Nothing -> putStrLn "Invalid Something"
+	     Just x -> do putStrLn ("The best move is " ++ show brd_ ++ " and its outcome is:")
+                          putWinner x
   | otherwise = putStrLn (show(bestMoveBounded brd (getDepth flags)))
